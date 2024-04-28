@@ -1,13 +1,29 @@
 local isQBCore = true -- Set this to false if you are using ESX instead of QBCore
 local CoreObject, playerData
 
+local ESX = nil
+local isOldESX = false
+
 if isQBCore then
-    CoreObject = exports['qb-core']:GetCoreObject() -- Get the QBCore object
+	CoreObject = exports['qb-core']:GetCoreObject() -- Get the QBCore object
     playerData = CoreObject.Functions.GetPlayerData() -- Fetch player data
 else
-    ESX = exports["es_extended"]:getSharedObject() -- Get the ESX object using the new method
-    playerData = ESX.GetPlayerData() -- Fetch player data
+	if isOldESX then
+        TriggerEvent('esx:getSharedObject', function(obj)
+            ESX = obj
+        end)
+		playerData = ESX.GetPlayerData()
+        
+	elseif isOldESX == false
+		ESX = exports.es_extended.getSharedObject()
+		playerData = ESX.GetPlayerData()
+	end
 end
+
+Citizen.CreateThread(function()
+    while true do
+        Citizen.Wait(0)
+            
 
 local musicStopped = false -- Flag to control the music stopping logic
 
